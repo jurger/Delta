@@ -56,7 +56,6 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonReadInt
@@ -67,7 +66,7 @@
             this.buttonReadInt.TabIndex = 0;
             this.buttonReadInt.Text = "read int";
             this.buttonReadInt.UseVisualStyleBackColor = true;
-            this.buttonReadInt.Click += new System.EventHandler(this.Button1Click);
+            this.buttonReadInt.Click += new System.EventHandler(this.ButtonReadIntAddresClick);
             // 
             // listBox1
             // 
@@ -103,7 +102,8 @@
             this.WAddressEdit.Name = "WAddressEdit";
             this.WAddressEdit.Size = new System.Drawing.Size(96, 22);
             this.WAddressEdit.TabIndex = 4;
-            this.WAddressEdit.Text = "0x100b";
+            this.WAddressEdit.Text = "100d";
+            this.WAddressEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WAddressEdit_KeyPress);
             // 
             // label2
             // 
@@ -121,6 +121,7 @@
             this.WValueEdit.Size = new System.Drawing.Size(93, 22);
             this.WValueEdit.TabIndex = 4;
             this.WValueEdit.Text = "12";
+            this.WValueEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WValueEdit_KeyPress);
             // 
             // label3
             // 
@@ -155,7 +156,7 @@
             this.button3.TabIndex = 8;
             this.button3.Text = "write float";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.ButtonWriteFloatClick);
             // 
             // groupBox2
             // 
@@ -197,7 +198,7 @@
             this.RAddressEdit.Name = "RAddressEdit";
             this.RAddressEdit.Size = new System.Drawing.Size(96, 22);
             this.RAddressEdit.TabIndex = 5;
-            this.RAddressEdit.Text = "0x100b";
+            this.RAddressEdit.Text = "100b";
             this.RAddressEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RAddressEditKeyPress);
             // 
             // chart1
@@ -250,8 +251,6 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(569, 24);
@@ -273,7 +272,7 @@
             this.configureComPortToolStripMenuItem.Text = "Configure com port";
             this.configureComPortToolStripMenuItem.Click += new System.EventHandler(this.configureComPortToolStripMenuItem_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -284,15 +283,13 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.menuStrip1);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

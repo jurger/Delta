@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.IO;
 
 
 using Modbus.Device;
@@ -12,11 +13,30 @@ namespace delta
 {
     public partial class MainForm : Form
     {
-        IniFile ini = new IniFile(@"C:/test.ini");
-        readonly SerialPort port = new SerialPort("COM1");
+        static string inipath = Directory.GetCurrentDirectory() + @"\deltadvp.ini";
+        IniFile ini = new IniFile(inipath);
+        readonly SerialPort port = new SerialPort("COM2");
         DateTime dt = new DateTime();
         const byte slaveId = 0;
-        
+
+        private void SetHexOnly(KeyPressEventArgs e)
+        {
+            var c = e.KeyChar;
+            bool b = (c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
+            if (!b)
+                e.Handled = true;
+
+        }
+        private void SetNumOnly(KeyPressEventArgs e)
+        {
+            var c = e.KeyChar;
+            bool b = (c == '\b' || ('0' <= c && c <= '9') || c == ',');
+            if (!b)
+                e.Handled = true;
+            if (WValueEdit.Text.IndexOf(',') > 1 && c == ',')
+                e.Handled = true;
+
+        }
 
         private void InitPort(SerialPort com_port)
         {
@@ -62,7 +82,7 @@ namespace delta
                     break;
                 default:
                     throw new Exception("Not correct stop bits settings");
-                    break;
+                    
             }
             
 
@@ -71,27 +91,27 @@ namespace delta
         public MainForm()
         {
             InitializeComponent();
+            InitPort(port);
             //port.BaudRate = 115200;
             //port.DataBits = 7;
             //port.Parity = Parity.Even;
             //port.StopBits = StopBits.One;
-            InitPort(port);
-            try
-            {
-                port.Open();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                //foreach (var control in Controls.OfType<Button>())
-                //    control.Enabled = false;
-            }
+            //try
+            //{
+            //    port.Open();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //    //foreach (var control in Controls.OfType<Button>())
+            //    //    control.Enabled = false;
+            //}
         }
 
 
         private ushort ReadIntRegister(ushort startAddress )
         {
-            //if (!port.IsOpen)
+            if (!port.IsOpen)
             try
             {
                 port.Open();
@@ -154,7 +174,7 @@ namespace delta
 
         }
 
-        private void Button1Click(object sender, EventArgs e)
+        private void ButtonReadIntAddresClick(object sender, EventArgs e)
         {
             label1.Text = ReadIntRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
             
@@ -163,11 +183,16 @@ namespace delta
 
         private void Button2Click(object sender, EventArgs e)
         {
+            if (WValueEdit.Text.IndexOf(',') > -1)
+            {
+                MessageBox.Show("Value must be integer");
+                return;
+            }
             WriteRegisters(Convert.ToUInt16(WAddressEdit.Text, 16), Convert.ToUInt16(WValueEdit.Text, 10));
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ButtonWriteFloatClick(object sender, EventArgs e)
         {
             WriteRegisters(Convert.ToUInt16(WAddressEdit.Text, 16), Convert.ToSingle(WValueEdit.Text));
 
@@ -205,13 +230,8 @@ namespace delta
 
         private void RAddressEditKeyPress(object sender, KeyPressEventArgs e)
         {
-            //if (!(Regex.IsMatch(e.KeyChar.ToString(), "^[0-9a-fA-F]+$")))
-            //    e.Handled = true;
-            var c = e.KeyChar;
-            bool b = !(c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
-            if (b)
-                    e.Handled = true;
-
+          
+            SetHexOnly(e);
            
 
         }
@@ -222,6 +242,20 @@ namespace delta
         {
           Form2 frm = new Form2();
             frm.Show();
+        }
+
+        private void WAddressEdit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //var c = e.KeyChar;
+            //bool b = !(c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
+            //if (b)
+            //    e.Handled = true;
+            SetHexOnly(e);
+        }
+
+        private void WValueEdit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetNumOnly(e);
         }
 
 
