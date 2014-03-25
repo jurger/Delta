@@ -41,6 +41,7 @@ namespace delta
         private void InitPort(SerialPort com_port)
         {
             const string section = "settings";
+            
             com_port.BaudRate = Convert.ToInt32(ini.IniReadValue(section, "bauderate"));
             com_port.DataBits = Convert.ToInt32(ini.IniReadValue(section, "databits"));
 
@@ -140,7 +141,7 @@ namespace delta
             
             ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress,2);
             return
-                ModbusUtility.GetSingle(registers[0], registers[1]);
+                ModbusUtility.GetSingle(registers[1], registers[0]);
 
 
         }
@@ -167,8 +168,8 @@ namespace delta
             var registers = new ushort[4];
             byte[] bytereg = new byte[4]; 
             bytereg = BitConverter.GetBytes(registerValue);
-            registers[1] = BitConverter.ToUInt16(bytereg, 0);
-            registers[0] = BitConverter.ToUInt16(bytereg, 2);
+            registers[0] = BitConverter.ToUInt16(bytereg, 0);
+            registers[1] = BitConverter.ToUInt16(bytereg, 2);
 
             master.WriteMultipleRegisters(slaveId, startAddress, registers);
 
@@ -176,12 +177,13 @@ namespace delta
 
         private void ButtonReadIntAddresClick(object sender, EventArgs e)
         {
-            label1.Text = ReadIntRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
+            if (RAddressEdit.Text.Length > 0)
+                label1.Text = ReadIntRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
             
             
         }
 
-        private void Button2Click(object sender, EventArgs e)
+        private void ButtonWriteIntClick(object sender, EventArgs e)
         {
             if (WValueEdit.Text.IndexOf(',') > -1)
             {
@@ -194,22 +196,29 @@ namespace delta
 
         private void ButtonWriteFloatClick(object sender, EventArgs e)
         {
-            WriteRegisters(Convert.ToUInt16(WAddressEdit.Text, 16), Convert.ToSingle(WValueEdit.Text));
+            if (WAddressEdit.Text.Length > 0)
+                WriteRegisters(Convert.ToUInt16(WAddressEdit.Text, 16), Convert.ToSingle(WValueEdit.Text));
 
             
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void ButtonReadFloatClick(object sender, EventArgs e)
         {
-
-           label1.Text = ReadFloatRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
+            if (RAddressEdit.Text.Length > 0)
+                label1.Text = ReadFloatRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
 
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            chart1.Series[0].Points.AddXY(dt.Second, ReadIntRegister(0x100b));
-            chart1.Series[1].Points.AddXY(dt.Second, ReadIntRegister(0x102e));
+            ushort t = ReadIntRegister(0x100b);
+            float p = ReadFloatRegister(0x102e);
+
+            chart1.Series[0].Points.AddXY(dt.Second,t );
+            chart2.Series[0].Points.AddXY(dt.Second, p);
+
+            label1.Text = "t = "+ t.ToString();
+            label5.Text = "P = "+ p.ToString();
             
         }
 
@@ -238,24 +247,60 @@ namespace delta
 
        
 
-        private void configureComPortToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-          Form2 frm = new Form2();
-            frm.Show();
-        }
+       
 
         private void WAddressEdit_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //var c = e.KeyChar;
-            //bool b = !(c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
-            //if (b)
-            //    e.Handled = true;
+           
             SetHexOnly(e);
         }
 
         private void WValueEdit_KeyPress(object sender, KeyPressEventArgs e)
         {
             SetNumOnly(e);
+        }
+
+        private void comPortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 frm = new Form2();
+            frm.Show();
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            ushort Ttask;// =Convert.ToSingle(textBox1.Text);
+            if (e.KeyCode == Keys.Enter)
+            {
+                Ttask = Convert.ToUInt16(TTaskEdit.Text);
+                WriteRegisters(0x100a, Ttask);
+            }
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            float KpF;
+            if (e.KeyCode == Keys.Enter)
+            {
+                KpF = Convert.ToSingle(KpFEdit.Text);
+                WriteRegisters(0x100c, KpF);
+            }
         }
 
 
