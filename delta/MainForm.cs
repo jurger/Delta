@@ -91,6 +91,7 @@ namespace delta
 
         public MainForm()
         {
+            
             InitializeComponent();
             InitPort(port);
             //port.BaudRate = 115200;
@@ -283,23 +284,33 @@ namespace delta
 
         }
 
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        private void TTaskEdit_KeyDown(object sender, KeyEventArgs e)
         {
             ushort Ttask;// =Convert.ToSingle(textBox1.Text);
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && TTaskEdit.Text.Length > 0)
             {
                 Ttask = Convert.ToUInt16(TTaskEdit.Text);
                 WriteRegisters(0x100a, Ttask);
             }
         }
 
-        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        private void KpFEdit_KeyDown(object sender, KeyEventArgs e)
         {
             float KpF;
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && KpFEdit.Text.Length > 0)
             {
                 KpF = Convert.ToSingle(KpFEdit.Text);
                 WriteRegisters(0x100c, KpF);
+            }
+        }
+
+        private void KiFEdit_KeyDown(object sender, KeyEventArgs e)
+        {
+            float KiF;
+            if (e.KeyCode == Keys.Enter && KiFEdit.Text.Length > 0)
+            {
+                KiF = Convert.ToSingle(KiFEdit.Text);
+                WriteRegisters(0x1034, KiF);
             }
         }
 

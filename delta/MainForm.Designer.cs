@@ -31,10 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.buttonReadInt = new System.Windows.Forms.Button();
             this.buttonWriteInt = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -233,23 +232,15 @@
             this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(12, 254);
             this.chart1.Name = "chart1";
-            series4.BorderColor = System.Drawing.Color.Red;
-            series4.BorderWidth = 2;
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series4.Color = System.Drawing.Color.Red;
-            series4.Legend = "Legend12";
-            series4.LegendText = "t";
-            series4.Name = "Series1";
-            series5.BorderWidth = 3;
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series5.Color = System.Drawing.Color.Blue;
-            series5.Legend = "Legend12";
-            series5.LegendText = "P";
-            series5.Name = "Series2";
-            this.chart1.Series.Add(series4);
-            this.chart1.Series.Add(series5);
+            series3.BorderColor = System.Drawing.Color.Red;
+            series3.BorderWidth = 2;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
+            series3.Color = System.Drawing.Color.Red;
+            series3.Legend = "Legend12";
+            series3.LegendText = "t";
+            series3.Name = "Series1";
+            this.chart1.Series.Add(series3);
             this.chart1.Size = new System.Drawing.Size(765, 176);
             this.chart1.TabIndex = 10;
             this.chart1.Text = "chart1";
@@ -265,7 +256,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(139, 24);
             this.button1.TabIndex = 11;
-            this.button1.Text = "Graph";
+            this.button1.Text = "Start Graph ";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -291,14 +282,14 @@
             // comPortToolStripMenuItem
             // 
             this.comPortToolStripMenuItem.Name = "comPortToolStripMenuItem";
-            this.comPortToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.comPortToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.comPortToolStripMenuItem.Text = "Com port";
             this.comPortToolStripMenuItem.Click += new System.EventHandler(this.comPortToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -321,11 +312,11 @@
             this.chart2.ChartAreas.Add(chartArea4);
             this.chart2.Location = new System.Drawing.Point(12, 451);
             this.chart2.Name = "chart2";
-            series6.BorderWidth = 3;
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series6.Name = "Series1";
-            this.chart2.Series.Add(series6);
+            series4.BorderWidth = 3;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.Name = "Series1";
+            this.chart2.Series.Add(series4);
             this.chart2.Size = new System.Drawing.Size(765, 141);
             this.chart2.TabIndex = 13;
             this.chart2.Text = "chart2";
@@ -340,11 +331,11 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(544, 117);
+            this.button2.Location = new System.Drawing.Point(486, 117);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(126, 23);
             this.button2.TabIndex = 15;
-            this.button2.Text = "Stop";
+            this.button2.Text = "Stop Graph";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -354,7 +345,8 @@
             this.TTaskEdit.Name = "TTaskEdit";
             this.TTaskEdit.Size = new System.Drawing.Size(95, 20);
             this.TTaskEdit.TabIndex = 16;
-            this.TTaskEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
+            this.TTaskEdit.Text = "6000";
+            this.TTaskEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TTaskEdit_KeyDown);
             // 
             // label6
             // 
@@ -381,7 +373,8 @@
             this.KpFEdit.Name = "KpFEdit";
             this.KpFEdit.Size = new System.Drawing.Size(100, 20);
             this.KpFEdit.TabIndex = 18;
-            this.KpFEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+            this.KpFEdit.Text = "0,001";
+            this.KpFEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KpFEdit_KeyDown);
             // 
             // label8
             // 
@@ -398,6 +391,8 @@
             this.KiFEdit.Name = "KiFEdit";
             this.KiFEdit.Size = new System.Drawing.Size(100, 20);
             this.KiFEdit.TabIndex = 20;
+            this.KiFEdit.Text = "0,0001";
+            this.KiFEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KiFEdit_KeyDown);
             // 
             // MainForm
             // 
@@ -418,6 +413,8 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
