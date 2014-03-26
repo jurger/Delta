@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.buttonReadInt = new System.Windows.Forms.Button();
             this.buttonWriteInt = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,7 +49,7 @@
             this.buttonReadFl = new System.Windows.Forms.Button();
             this.RAddressEdit = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timerGraphUpdate = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -221,34 +221,34 @@
             // 
             // chart1
             // 
-            chartArea3.CursorX.IsUserEnabled = true;
-            chartArea3.CursorX.IsUserSelectionEnabled = true;
-            chartArea3.CursorY.IsUserEnabled = true;
-            chartArea3.CursorY.IsUserSelectionEnabled = true;
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
-            legend2.Enabled = false;
-            legend2.Name = "Legend12";
-            this.chart1.Legends.Add(legend2);
+            chartArea5.CursorX.IsUserEnabled = true;
+            chartArea5.CursorX.IsUserSelectionEnabled = true;
+            chartArea5.CursorY.IsUserEnabled = true;
+            chartArea5.CursorY.IsUserSelectionEnabled = true;
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend3.Enabled = false;
+            legend3.Name = "Legend12";
+            this.chart1.Legends.Add(legend3);
             this.chart1.Location = new System.Drawing.Point(12, 254);
             this.chart1.Name = "chart1";
-            series3.BorderColor = System.Drawing.Color.Red;
-            series3.BorderWidth = 2;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series3.Color = System.Drawing.Color.Red;
-            series3.Legend = "Legend12";
-            series3.LegendText = "t";
-            series3.Name = "Series1";
-            this.chart1.Series.Add(series3);
+            series5.BorderColor = System.Drawing.Color.Red;
+            series5.BorderWidth = 2;
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
+            series5.Color = System.Drawing.Color.Red;
+            series5.Legend = "Legend12";
+            series5.LegendText = "t";
+            series5.Name = "Series1";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(765, 176);
             this.chart1.TabIndex = 10;
             this.chart1.Text = "chart1";
             // 
-            // timer1
+            // timerGraphUpdate
             // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timerGraphUpdate.Interval = 1000;
+            this.timerGraphUpdate.Tick += new System.EventHandler(this.timerGraphUpdateTick);
             // 
             // button1
             // 
@@ -258,7 +258,7 @@
             this.button1.TabIndex = 11;
             this.button1.Text = "Start Graph ";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.button1.Click += new System.EventHandler(this.ButtonStartTimerClick);
             // 
             // menuStrip1
             // 
@@ -308,15 +308,15 @@
             // 
             // chart2
             // 
-            chartArea4.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea4);
+            chartArea6.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea6);
             this.chart2.Location = new System.Drawing.Point(12, 451);
             this.chart2.Name = "chart2";
-            series4.BorderWidth = 3;
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series4.Name = "Series1";
-            this.chart2.Series.Add(series4);
+            series6.BorderWidth = 3;
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series6.Name = "Series1";
+            this.chart2.Series.Add(series6);
             this.chart2.Size = new System.Drawing.Size(765, 141);
             this.chart2.TabIndex = 13;
             this.chart2.Text = "chart2";
@@ -347,6 +347,7 @@
             this.TTaskEdit.TabIndex = 16;
             this.TTaskEdit.Text = "6000";
             this.TTaskEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TTaskEdit_KeyDown);
+            this.TTaskEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TTaskEdit_KeyPress);
             // 
             // label6
             // 
@@ -356,7 +357,6 @@
             this.label6.Size = new System.Drawing.Size(38, 13);
             this.label6.TabIndex = 17;
             this.label6.Text = "TTask";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label7
             // 
@@ -375,6 +375,7 @@
             this.KpFEdit.TabIndex = 18;
             this.KpFEdit.Text = "0,001";
             this.KpFEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KpFEdit_KeyDown);
+            this.KpFEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KpFEdit_KeyPress);
             // 
             // label8
             // 
@@ -393,6 +394,7 @@
             this.KiFEdit.TabIndex = 20;
             this.KiFEdit.Text = "0,0001";
             this.KiFEdit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KiFEdit_KeyDown);
+            this.KiFEdit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KiFEdit_KeyPress);
             // 
             // MainForm
             // 
@@ -416,7 +418,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Delta DVP control";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -445,7 +447,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button buttonReadFl;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timerGraphUpdate;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox RAddressEdit;
         private System.Windows.Forms.MenuStrip menuStrip1;

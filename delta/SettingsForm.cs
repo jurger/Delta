@@ -4,13 +4,13 @@ using System.IO;
 
 namespace delta
 {
-    public partial class Form2 : Form
+    public partial class PortForm : Form
     {
-
+      public  static bool port_status_changed = false;
         static string inipath = Directory.GetCurrentDirectory() + @"\deltadvp.ini";
         readonly  IniFile ini = new IniFile(inipath);
         private const string section = "settings";
-        public Form2()
+        public PortForm()
         {
 
             InitializeComponent();
@@ -20,7 +20,7 @@ namespace delta
 
 
             ComPortComboBox.Text = ini.IniReadValue(section, "comport");
-            BaudeRateComboBox.Text =ini.IniReadValue(section, "bauderate");
+            BaudeRateComboBox.Text = ini.IniReadValue(section, "bauderate");
             DataBitsComboBox.Text = ini.IniReadValue(section, "databits");
             ParityComboBox.Text = ini.IniReadValue(section, "parity");
             StopBitsComboBox.Text = ini.IniReadValue(section, "stopbits");
@@ -36,7 +36,7 @@ namespace delta
             ini.IniWriteValue(section, "databits", DataBitsComboBox.Text);
             ini.IniWriteValue(section, "parity", ParityComboBox.Text);
             ini.IniWriteValue(section, "stopbits", StopBitsComboBox.Text);
-            
+            port_status_changed = true;
             ActiveForm.Close();
         }
     }

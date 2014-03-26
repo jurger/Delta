@@ -14,12 +14,15 @@ namespace delta
     public partial class MainForm : Form
     {
         static string inipath = Directory.GetCurrentDirectory() + @"\deltadvp.ini";
+        
+        const string section = "settings";
         IniFile ini = new IniFile(inipath);
-        readonly SerialPort port = new SerialPort("COM2");
+        readonly SerialPort port = new SerialPort("COM1");
         DateTime dt = new DateTime();
         const byte slaveId = 0;
+        const int timeout = 2000;
 
-        private void SetHexOnly(KeyPressEventArgs e)
+        private void SetHexMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
             bool b = (c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
@@ -27,7 +30,7 @@ namespace delta
                 e.Handled = true;
 
         }
-        private void SetNumOnly(KeyPressEventArgs e)
+        private void SetFloatMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
             bool b = (c == '\b' || ('0' <= c && c <= '9') || c == ',');
@@ -37,11 +40,21 @@ namespace delta
                 e.Handled = true;
 
         }
-
-        private void InitPort(SerialPort com_port)
+        private void SetIntMask(KeyPressEventArgs e)
         {
-            const string section = "settings";
+            var c = e.KeyChar;
+            bool b = (c == '\b' || ('0' <= c && c <= '9'));
+            if (!b)
+                e.Handled = true;
+           
+
+        }
+        public  void InitPort(SerialPort com_port)
+        {
+            if (com_port.IsOpen)
+                com_port.Close();
             
+            com_port.PortName = ini.IniReadValue(section, "comport");
             com_port.BaudRate = Convert.ToInt32(ini.IniReadValue(section, "bauderate"));
             com_port.DataBits = Convert.ToInt32(ini.IniReadValue(section, "databits"));
 
@@ -82,10 +95,17 @@ namespace delta
                     com_port.StopBits = StopBits.Two;
                     break;
                 default:
-                    throw new Exception("Not correct stop bits settings");
+                    MessageBox.Show("Not correct stop bit settings");
+                    break;
                     
             }
             
+
+        }
+        private void CheckPort()
+        {
+            if (PortForm.port_status_changed)
+                InitPort(port);
 
         }
 
@@ -93,86 +113,107 @@ namespace delta
         {
             
             InitializeComponent();
-            InitPort(port);
-            //port.BaudRate = 115200;
-            //port.DataBits = 7;
-            //port.Parity = Parity.Even;
-            //port.StopBits = StopBits.One;
-            //try
-            //{
-            //    port.Open();
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //    //foreach (var control in Controls.OfType<Button>())
-            //    //    control.Enabled = false;
-            //}
+            if (File.Exists(inipath))
+                InitPort(port);
+            else
+                MessageBox.Show("Не найден файл настроек");
+           
         }
 
 
         private ushort ReadIntRegister(ushort startAddress )
         {
-            if (!port.IsOpen)
-            try
+
+          CheckPort();
+           try
             {
-                port.Open();
+              if (!port.IsOpen)
+                    port.Open();
+              IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+              
+
+              ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 1);
+
+              return registers[0];
             }
             catch (Exception ex)
             {
+                timerGraphUpdate.Stop();
                 MessageBox.Show(ex.Message);
                 return 0;
             }
 
-            IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-           
-            ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 1);
-           
-                return registers[0];
-           
-            
 
         }
 
         private float ReadFloatRegister(ushort startAddress)
         {
-            if (!port.IsOpen)
-                port.Open();
-            IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-            
-            ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress,2);
-            return
-                ModbusUtility.GetSingle(registers[1], registers[0]);
+            CheckPort();
+                try
+                {
+                    if (!port.IsOpen)
+                        port.Open();
+                    IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+                    master.Transport.ReadTimeout = timeout;
 
+                    ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 2);
+                    return
+                        ModbusUtility.GetSingle(registers[1], registers[0]);
+                }
+                catch (Exception ex)
+                {
+                    timerGraphUpdate.Stop();
+                    MessageBox.Show(ex.Message);
+                    return 0;
+                }
 
         }
 
         private void WriteRegisters(ushort startAddress, ushort registerValue)
         {
-            if (!port.IsOpen)
-                port.Open();
+            CheckPort();
 
-            IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-
-            
-            master.WriteSingleRegister(slaveId, startAddress, registerValue);
-
+            try
+            {
+                if (!port.IsOpen)
+                    port.Open();
+                IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+                master.Transport.WriteTimeout = timeout;
+                master.WriteSingleRegister(slaveId, startAddress, registerValue);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return ;
+            }
 
         }
 
         private void WriteRegisters(ushort startAddress, float registerValue)
         {
-            if (!port.IsOpen)
-                port.Open();
-            IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+            CheckPort();
 
-            var registers = new ushort[4];
-            byte[] bytereg = new byte[4]; 
-            bytereg = BitConverter.GetBytes(registerValue);
-            registers[0] = BitConverter.ToUInt16(bytereg, 0);
-            registers[1] = BitConverter.ToUInt16(bytereg, 2);
+            try
+            {
+                if (!port.IsOpen)
+                    port.Open();
+                IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
 
-            master.WriteMultipleRegisters(slaveId, startAddress, registers);
+
+                var registers = new ushort[4];
+                byte[] bytereg = new byte[4];
+                bytereg = BitConverter.GetBytes(registerValue);
+                registers[0] = BitConverter.ToUInt16(bytereg, 0);
+                registers[1] = BitConverter.ToUInt16(bytereg, 2);
+
+                master.WriteMultipleRegisters(slaveId, startAddress, registers);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return ;
+            }
+            
 
         }
 
@@ -210,12 +251,13 @@ namespace delta
 
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timerGraphUpdateTick(object sender, EventArgs e)
         {
+            
             ushort t = ReadIntRegister(0x100b);
             float p = ReadFloatRegister(0x102e);
 
-            chart1.Series[0].Points.AddXY(dt.Second,t );
+            chart1.Series[0].Points.AddXY(dt.Second, t);
             chart2.Series[0].Points.AddXY(dt.Second, p);
 
             label1.Text = "t = "+ t.ToString();
@@ -223,47 +265,36 @@ namespace delta
             
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void ButtonStartTimerClick(object sender, EventArgs e)
         {
-            timer1.Start();
-            //int x = 0;
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    double ysin = Math.Sin(x);
-            //    double ycos = Math.Cos(x);
-            //    chart1.Series[0].Points.AddXY(x, ysin);
-            //    chart1.Series[1].Points.AddXY(x, ycos);
-
-            //    x++;
-            //}
+            
+            timerGraphUpdate.Start();
+            
         }
 
         private void RAddressEditKeyPress(object sender, KeyPressEventArgs e)
         {
           
-            SetHexOnly(e);
+            SetHexMask(e);
            
 
         }
 
-       
-
-       
 
         private void WAddressEdit_KeyPress(object sender, KeyPressEventArgs e)
         {
            
-            SetHexOnly(e);
+            SetHexMask(e);
         }
 
         private void WValueEdit_KeyPress(object sender, KeyPressEventArgs e)
         {
-            SetNumOnly(e);
+            SetFloatMask(e);
         }
 
         private void comPortToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form2 frm = new Form2();
+            PortForm frm = new PortForm();
             frm.Show();
 
         }
@@ -276,13 +307,10 @@ namespace delta
 
         private void button2_Click(object sender, EventArgs e)
         {
-            timer1.Stop();
+            timerGraphUpdate.Stop();
         }
 
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
+       
 
         private void TTaskEdit_KeyDown(object sender, KeyEventArgs e)
         {
@@ -312,6 +340,21 @@ namespace delta
                 KiF = Convert.ToSingle(KiFEdit.Text);
                 WriteRegisters(0x1034, KiF);
             }
+        }
+
+        private void KpFEdit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetFloatMask(e);
+        }
+
+        private void KiFEdit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetFloatMask(e);
+        }
+
+        private void TTaskEdit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetIntMask(e);
         }
 
 
