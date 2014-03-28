@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
@@ -9,20 +8,20 @@ using Modbus.Device;
 using Modbus.Utility;
 
 
-namespace delta
+namespace Delta
 {
     public partial class MainForm : Form
     {
-        static string inipath = Directory.GetCurrentDirectory() + @"\deltadvp.ini";
+        static readonly string inipath = Directory.GetCurrentDirectory() + @"\deltadvp.ini";
         
-        const string section = "settings";
-        IniFile ini = new IniFile(inipath);
+        const string Section = "settings";
+        readonly IniFile ini = new IniFile(inipath);
         readonly SerialPort port = new SerialPort("COM1");
         DateTime dt = new DateTime();
         const byte slaveId = 0;
         const int timeout = 2000;
 
-        private void SetHexMask(KeyPressEventArgs e)
+        private static void SetHexMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
             bool b = (c == '\b' || ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'));
@@ -40,7 +39,7 @@ namespace delta
                 e.Handled = true;
 
         }
-        private void SetIntMask(KeyPressEventArgs e)
+        private static void SetIntMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
             bool b = (c == '\b' || ('0' <= c && c <= '9'));
@@ -49,57 +48,59 @@ namespace delta
            
 
         }
-        public  void InitPort(SerialPort com_port)
-        {
-            if (com_port.IsOpen)
-                com_port.Close();
-            
-            com_port.PortName = ini.IniReadValue(section, "comport");
-            com_port.BaudRate = Convert.ToInt32(ini.IniReadValue(section, "bauderate"));
-            com_port.DataBits = Convert.ToInt32(ini.IniReadValue(section, "databits"));
 
-            switch (ini.IniReadValue(section, "parity"))
+        private void InitPort(SerialPort comPort)
+        {
+            if (comPort.IsOpen)
+                comPort.Close();
+            
+            comPort.PortName = ini.IniReadValue(Section, "comport");
+            comPort.BaudRate = Convert.ToInt32(ini.IniReadValue(Section, "bauderate"));
+            comPort.DataBits = Convert.ToInt32(ini.IniReadValue(Section, "databits"));
+
+            switch (ini.IniReadValue(Section, "parity"))
             {
                 case "Even":
-                    com_port.Parity =Parity.Even;
+                    comPort.Parity =Parity.Even;
                     break;
                 case "Mark":
-                    com_port.Parity = Parity.Mark;
+                    comPort.Parity = Parity.Mark;
                     break;
                 case "None":
-                    com_port.Parity = Parity.None;
+                    comPort.Parity = Parity.None;
                     break;
                 case "Odd":
-                    com_port.Parity = Parity.Odd;
+                    comPort.Parity = Parity.Odd;
                     break;
                 case "Space":
-                    com_port.Parity = Parity.Space;
+                    comPort.Parity = Parity.Space;
                     break;
                 default:
                    // throw  new Exception("Not correct parity settings");
                     MessageBox.Show("Not correct parity settings");
                     break;
             }
-            switch (ini.IniReadValue(section, "stopbits"))
+            switch (ini.IniReadValue(Section, "stopbits"))
             {
                 case "None":
-                    com_port.StopBits = StopBits.None;
+                    comPort.StopBits = StopBits.None;
                     break;
                 case "1":
-                    com_port.StopBits = StopBits.One;
+                    comPort.StopBits = StopBits.One;
                     break;
                 case "1.5":
-                    com_port.StopBits = StopBits.OnePointFive;
+                    comPort.StopBits = StopBits.OnePointFive;
                     break;
                 case "2":
-                    com_port.StopBits = StopBits.Two;
+                    comPort.StopBits = StopBits.Two;
                     break;
                 default:
                     MessageBox.Show("Not correct stop bit settings");
                     break;
                     
             }
-            
+            comPort.ReadTimeout = 2000;
+
 
         }
         private void CheckPort()
@@ -184,7 +185,6 @@ namespace delta
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return ;
             }
 
         }
@@ -198,11 +198,8 @@ namespace delta
                 if (!port.IsOpen)
                     port.Open();
                 IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-
-
                 var registers = new ushort[4];
-                byte[] bytereg = new byte[4];
-                bytereg = BitConverter.GetBytes(registerValue);
+                byte[] bytereg = BitConverter.GetBytes(registerValue);
                 registers[0] = BitConverter.ToUInt16(bytereg, 0);
                 registers[1] = BitConverter.ToUInt16(bytereg, 2);
 
@@ -211,7 +208,6 @@ namespace delta
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return ;
             }
             
 
@@ -260,8 +256,8 @@ namespace delta
             chart1.Series[0].Points.AddXY(dt.Second, t);
             chart2.Series[0].Points.AddXY(dt.Second, p);
 
-            label1.Text = "t = "+ t.ToString();
-            label5.Text = "P = "+ p.ToString();
+            label1.Text = "t = "+ t;
+            label5.Text = "P = "+ p;
             
         }
 
@@ -314,32 +310,23 @@ namespace delta
 
         private void TTaskEdit_KeyDown(object sender, KeyEventArgs e)
         {
-            ushort Ttask;// =Convert.ToSingle(textBox1.Text);
-            if (e.KeyCode == Keys.Enter && TTaskEdit.Text.Length > 0)
-            {
-                Ttask = Convert.ToUInt16(TTaskEdit.Text);
-                WriteRegisters(0x100a, Ttask);
-            }
+            if (e.KeyCode != Keys.Enter || TTaskEdit.Text.Length <= 0) return;
+            ushort Ttask = Convert.ToUInt16(TTaskEdit.Text);// =Convert.ToSingle(textBox1.Text);
+            WriteRegisters(0x100a, Ttask);
         }
 
         private void KpFEdit_KeyDown(object sender, KeyEventArgs e)
         {
-            float KpF;
-            if (e.KeyCode == Keys.Enter && KpFEdit.Text.Length > 0)
-            {
-                KpF = Convert.ToSingle(KpFEdit.Text);
-                WriteRegisters(0x100c, KpF);
-            }
+            if (e.KeyCode != Keys.Enter || KpFEdit.Text.Length <= 0) return;
+            float KpF = Convert.ToSingle(KpFEdit.Text);
+            WriteRegisters(0x100c, KpF);
         }
 
         private void KiFEdit_KeyDown(object sender, KeyEventArgs e)
         {
-            float KiF;
-            if (e.KeyCode == Keys.Enter && KiFEdit.Text.Length > 0)
-            {
-                KiF = Convert.ToSingle(KiFEdit.Text);
-                WriteRegisters(0x1034, KiF);
-            }
+            if (e.KeyCode != Keys.Enter || KiFEdit.Text.Length <= 0) return;
+            float KiF = Convert.ToSingle(KiFEdit.Text);
+            WriteRegisters(0x1034, KiF);
         }
 
         private void KpFEdit_KeyPress(object sender, KeyPressEventArgs e)

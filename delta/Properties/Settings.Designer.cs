@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace delta.Properties {
+namespace Delta.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

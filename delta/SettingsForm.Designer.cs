@@ -1,4 +1,4 @@
-﻿namespace delta
+﻿namespace Delta
 {
     partial class PortForm
     {
@@ -40,6 +40,8 @@
             this.BaudeRateComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +58,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.StopBitsComboBox);
             this.groupBox1.Controls.Add(this.label4);
@@ -68,7 +72,7 @@
             this.groupBox1.Controls.Add(this.ComPortComboBox);
             this.groupBox1.Location = new System.Drawing.Point(30, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 235);
+            this.groupBox1.Size = new System.Drawing.Size(164, 284);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
@@ -77,7 +81,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(14, 183);
+            this.label5.Location = new System.Drawing.Point(15, 183);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(57, 13);
             this.label5.TabIndex = 9;
@@ -177,19 +181,41 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(30, 253);
+            this.button1.Location = new System.Drawing.Point(30, 312);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 23);
+            this.button1.Size = new System.Drawing.Size(164, 23);
             this.button1.TabIndex = 10;
             this.button1.Text = "Apply";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label6.Location = new System.Drawing.Point(15, 223);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(82, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Read timeout";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.comboBox1.Location = new System.Drawing.Point(17, 239);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 10;
+            // 
             // PortForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(253, 309);
+            this.ClientSize = new System.Drawing.Size(223, 347);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -217,6 +243,8 @@
         private System.Windows.Forms.ComboBox BaudeRateComboBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboBox1;
 
     }
 }

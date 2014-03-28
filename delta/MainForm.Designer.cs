@@ -1,4 +1,4 @@
-﻿namespace delta
+﻿namespace Delta
 {
     partial class MainForm
     {

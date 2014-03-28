@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace delta
+namespace Delta
 {
     static class Program
     {
