@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
-
-
 using Modbus.Device;
 using Modbus.Utility;
 
@@ -29,6 +28,7 @@ namespace Delta
                 e.Handled = true;
 
         }
+
         private void SetFloatMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
@@ -39,7 +39,7 @@ namespace Delta
                 e.Handled = true;
 
         }
-        private static void SetIntMask(KeyPressEventArgs e)
+        public static void SetIntMask(KeyPressEventArgs e)
         {
             var c = e.KeyChar;
             bool b = (c == '\b' || ('0' <= c && c <= '9'));
@@ -99,7 +99,7 @@ namespace Delta
                     break;
                     
             }
-            comPort.ReadTimeout = 2000;
+            comPort.ReadTimeout =Convert.ToInt32(ini.IniReadValue(Section, "timeout"));
 
 
         }
@@ -112,13 +112,22 @@ namespace Delta
 
         public MainForm()
         {
-            
             InitializeComponent();
-            if (File.Exists(inipath))
+
+            if (File.Exists(inipath) )
+            {
+                
                 InitPort(port);
+            }
             else
-                MessageBox.Show("Не найден файл настроек");
-           
+            {
+                PortForm portfrm = new PortForm();
+                portfrm.ShowDialog();
+               //MessageBox.Show("deltadvp.ini not found", "Header", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //string s = Properties.Resources.TextFile.ini;
+
+            }
+
         }
 
 
@@ -126,22 +135,29 @@ namespace Delta
         {
 
           CheckPort();
-           try
+            try
             {
-              if (!port.IsOpen)
+                if (!port.IsOpen)
                     port.Open();
-              IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-              
+                IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
 
-              ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 1);
 
-              return registers[0];
+                ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 1);
+
+                return registers[0];
+            }
+            catch (TimeoutException)
+            {
+                timerGraphUpdate.Stop();
+                MessageBox.Show("Порт не отвечает");
+                return 0;
             }
             catch (Exception ex)
             {
                 timerGraphUpdate.Stop();
                 MessageBox.Show(ex.Message);
                 return 0;
+                
             }
 
 
@@ -155,17 +171,24 @@ namespace Delta
                     if (!port.IsOpen)
                         port.Open();
                     IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
-                    master.Transport.ReadTimeout = timeout;
+                    //master.Transport.ReadTimeout = timeout;
 
                     ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 2);
                     return
                         ModbusUtility.GetSingle(registers[1], registers[0]);
+                }
+                catch (TimeoutException)
+                {
+                    timerGraphUpdate.Stop();
+                    MessageBox.Show("Порт не отвечает");
+                    return 0;
                 }
                 catch (Exception ex)
                 {
                     timerGraphUpdate.Stop();
                     MessageBox.Show(ex.Message);
                     return 0;
+
                 }
 
         }
@@ -216,7 +239,7 @@ namespace Delta
         private void ButtonReadIntAddresClick(object sender, EventArgs e)
         {
             if (RAddressEdit.Text.Length > 0)
-                label1.Text = ReadIntRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
+                label1.Text = ReadIntRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString(CultureInfo.InvariantCulture);
             
             
         }
@@ -243,7 +266,7 @@ namespace Delta
         private void ButtonReadFloatClick(object sender, EventArgs e)
         {
             if (RAddressEdit.Text.Length > 0)
-                label1.Text = ReadFloatRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString();
+                label1.Text = ReadFloatRegister(Convert.ToUInt16(RAddressEdit.Text, 16)).ToString(CultureInfo.InvariantCulture);
 
         }
 

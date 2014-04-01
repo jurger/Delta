@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Delta
@@ -9,6 +10,7 @@ namespace Delta
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
+        
         static void Main()
         {
             Application.EnableVisualStyles();

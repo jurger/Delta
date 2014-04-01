@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Delta
@@ -38,6 +39,7 @@ namespace Delta
         public void IniWriteValue(string Section, string Key, string Value)
         {
             WritePrivateProfileString(Section, Key, Value, path);
+            
         }
         
 
